@@ -663,16 +663,16 @@
                 this.ctx.translate(220, 180);
                 this.ctx.rotate(-6 * Math.PI / 180);
                 
-                // Dải giấy rách
+                // Dải giấy rách (Đã được kéo dài trục X để ôm trọn chữ U)
                 this.ctx.fillStyle = '#ffffff';
                 this.ctx.shadowColor = 'rgba(0,0,0,0.1)';
                 this.ctx.shadowBlur = 10;
                 this.ctx.shadowOffsetY = 5;
                 this.ctx.beginPath();
-                this.ctx.moveTo(-120, -40);
-                this.ctx.lineTo(120, -35); // Cố tình vẽ xéo
-                this.ctx.lineTo(115, 35);
-                this.ctx.lineTo(-125, 40);
+                this.ctx.moveTo(-145, -40);
+                this.ctx.lineTo(145, -35); // Mở rộng lề phải
+                this.ctx.lineTo(140, 35);  // Mở rộng lề phải
+                this.ctx.lineTo(-150, 40); // Mở rộng lề trái
                 this.ctx.closePath();
                 this.ctx.fill();
                 
