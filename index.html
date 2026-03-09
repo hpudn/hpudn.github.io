@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HPU Student - Scrapbook Edition</title>
+    <!-- Font Outfit cho tiêu đề cứng cáp & Caveat cho nét chữ viết tay -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Caveat:wght@600;700&family=JetBrains+Mono:wght@700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* ==========================================================================
+           1. CSS VARIABLES: SCRAPBOOK / STUDENT AESTHETICS
+           ========================================================================== */
+        :root {
+            /* Palette Playful */
+            --color-blue: #4285F4;
+            --color-blue-light: #DCE6F1;
+            --color-yellow: #FBBC05;
+            --color-red: #EA4335;
+            --color-green: #34A853;
+
+            --color-bg-paper: #F4F7FB;
+            --color-text-main: #202124;
+            --color-text-muted: #5F6368;
+
+            /* Typography */
+            --font-display: 'Outfit', sans-serif;
+            --font-hand: 'Caveat', cursive;
+            --font-tech: 'JetBrains Mono', monospace;
+
+            /* Effects */
+            --shadow-sticker: 0 8px 24px rgba(66, 133, 244, 0.15);
+            --shadow-polaroid: 0 12px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        /* ==========================================================================
+           2. GLOBAL RESET & PAPER BACKGROUND
+           ========================================================================== */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-display);
+            color: var(--color-text-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            background-color: var(--color-bg-paper);
+            position: relative;
+        }
+
+        /* Lưới vở học sinh (Notebook Grid) */
+        .bg-grid {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background-size: 40px 40px;
+            background-image:
+                linear-gradient(to right, #e2e8f0 1px, transparent 1px),
+                linear-gradient(to bottom, #e2e8f0 1px, transparent 1px);
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        /* ==========================================================================
+           3. LAYOUT & CONTAINERS
+           ========================================================================== */
+        .app-container {
+            width: 100%;
+            max-width: 1200px;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 3rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        @media (min-width: 992px) {
+            .app-container {
+                grid-template-columns: 1fr 1fr;
+                align-items: center;
+                gap: 5rem;
+            }
+        }
+
+        /* Panel chính với phong cách thẻ Card hiện đại, sạch sẽ */
+        .control-panel {
+            background: #ffffff;
+            border-radius: 28px;
+            padding: 3rem;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            box-shadow: 0 20px 40px -15px rgba(66, 133, 244, 0.1);
+            border: 2px solid #eef2f6;
+        }
+
+        /* ==========================================================================
+           4. TYPOGRAPHY
+           ========================================================================== */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #E8F0FE;
+            color: var(--color-blue);
+            padding: 0.5rem 1rem;
+            border-radius: 100px;
+            font-family: var(--font-tech);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            width: max-content;
+        }
+
+        .main-heading {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 900;
+            line-height: 1.1;
+            letter-spacing: -1px;
+            color: var(--color-text-main);
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .sub-heading {
+            color: var(--color-text-muted);
+            font-size: 1.05rem;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        /* ==========================================================================
+           5. UPLOAD AREA
+           ========================================================================== */
+        .upload-box {
+            border: 2px dashed #cbd5e1;
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            text-align: center;
+            background: #f8fafc;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .upload-box:hover,
+        .upload-box.dragover {
+            background: #E8F0FE;
+            border-color: var(--color-blue);
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            width: 60px;
+            height: 60px;
+            background: #ffffff;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.25rem;
+            color: var(--color-blue);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .upload-box:hover .upload-icon {
+            transform: rotate(-10deg) scale(1.1);
+        }
+
+        .upload-box h3 {
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .upload-box p {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+        }
+
+        input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        /* ==========================================================================
+           6. BUTTONS
+           ========================================================================== */
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 1rem;
+            border-radius: 14px;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .btn-primary {
+            background: var(--color-blue);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(66, 133, 244, 0.3);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(66, 133, 244, 0.4);
+            background: #3367d6;
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: var(--color-text-main);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #e2e8f0;
+        }
+
+        /* ==========================================================================
+           7. CANVAS PREVIEW AREA
+           ========================================================================== */
+        .preview-panel {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .canvas-container {
+            width: 100%;
+            max-width: 540px;
+            aspect-ratio: 1 / 1;
+            border-radius: 8px;
+            /* Vuông vức hơn để hợp viền ảnh */
+            background: transparent;
+            position: relative;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .canvas-container:hover {
+            transform: translateY(-5px) scale(1.02) rotate(1deg);
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+            border-radius: 8px;
+            box-shadow: var(--shadow-sticker);
+        }
+
+        .placeholder-ui {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #ffffff;
+            border: 2px dashed var(--color-blue-light);
+            border-radius: 16px;
+            z-index: 5;
+            transition: opacity 0.4s ease;
+        }
+
+        .placeholder-ui.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* ==========================================================================
+           8. TOAST NOTIFICATIONS
+           ========================================================================== */
+        .toast-wrapper {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .toast-msg {
+            background: #ffffff;
+            border-left: 4px solid var(--color-blue);
+            color: var(--color-text-main);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transform: translateX(120%);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .toast-msg.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Lưới nền toàn trang -->
+    <div class="bg-grid"></div>
+
+    <main class="app-container">
+
+        <!-- ================= CONTROL PANEL ================= -->
+        <div class="control-panel">
+
+            <div>
+                <div class="badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z">
+                        </path>
+                    </svg>
+                    Student Edition
+                </div>
+                <h1 class="main-heading">HPU Scrapbook<br>Profile.</h1>
+                <p class="sub-heading">Phong cách Sổ tay thanh xuân với hiệu ứng hình dán (Sticker) và khung ảnh
+                    Polaroid nghiêng độc đáo.</p>
+            </div>
+
+            <!-- Upload Box -->
+            <div class="upload-box" id="dropZone">
+                <div class="upload-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                        <polyline points="21 15 16 10 5 21"></polyline>
+                    </svg>
+                </div>
+                <h3>Kéo thả ảnh vào đây</h3>
+                <p>Khuyến nghị ảnh chân dung rõ nét (PNG, JPG)</p>
+                <input type="file" id="fileInput" accept="image/png, image/jpeg, image/jpg">
+            </div>
+
+            <!-- Actions -->
+            <div class="btn-group">
+                <button class="btn btn-secondary" id="resetBtn" disabled>
+                    Làm lại
+                </button>
+                <button class="btn btn-primary" id="downloadBtn" disabled>
+                    Tải Poster
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= CANVAS PREVIEW ================= -->
+        <div class="preview-panel">
+            <div class="canvas-container">
+                <div class="placeholder-ui" id="canvasPlaceholder">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#4285F4" stroke-width="1.5"
+                        style="margin-bottom: 1rem; opacity: 0.5;">
+                        <path
+                            d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z">
+                        </path>
+                        <circle cx="12" cy="13" r="3"></circle>
+                    </svg>
+                    <p style="color: #5F6368; font-weight: 600;">CHỜ HÌNH ẢNH...</p>
+                </div>
+                <!-- Canvas -->
+                <canvas id="avatarCanvas" width="1080" height="1080"></canvas>
+            </div>
+        </div>
+
+    </main>
+
+    <div class="toast-wrapper" id="toastContainer"></div>
+
+    <script>
+        /**
+         * ==========================================================================
+         * HÂN'S CREATIVE STUDIO -> SCRAPBOOK ENGINE
+         * Kỹ thuật: Polaroid Clip Mask, Sticker Stroke (White Line + Offset Shadow)
+         * ==========================================================================
+         */
+
+        const ART_CONFIG = {
+            SIZE: 1080,
+            COLOR_BLUE: '#4285F4',
+            COLOR_YELLOW: '#FBBC05',
+            COLOR_RED: '#EA4335',
+            COLOR_GREEN: '#34A853',
+            COLOR_BG: '#F4F7FB',
+            FONT_HEADING: "'Outfit', sans-serif"
+        };
+
+        class ScrapbookEngine {
+            constructor() {
+                this.canvas = document.getElementById('avatarCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.fileInput = document.getElementById('fileInput');
+                this.dropZone = document.getElementById('dropZone');
+                this.downloadBtn = document.getElementById('downloadBtn');
+                this.resetBtn = document.getElementById('resetBtn');
+                this.placeholder = document.getElementById('canvasPlaceholder');
+                
+                this.userImage = null;
+                
+                document.fonts.ready.then(() => {
+                    this.initEvents();
+                });
+            }
+
+            initEvents() {
+                this.fileInput.addEventListener('change', (e) => this.processImage(e.target.files));
+
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                    this.dropZone.addEventListener(eventName, (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    });
+                });
+
+                ['dragenter', 'dragover'].forEach(eventName => {
+                    this.dropZone.addEventListener(eventName, () => this.dropZone.classList.add('dragover'));
+                });
+
+                ['dragleave', 'drop'].forEach(eventName => {
+                    this.dropZone.addEventListener(eventName, () => this.dropZone.classList.remove('dragover'));
+                });
+
+                this.dropZone.addEventListener('drop', (e) => this.processImage(e.dataTransfer.files));
+                this.downloadBtn.addEventListener('click', () => this.exportArtwork());
+                this.resetBtn.addEventListener('click', () => this.clearStage());
+            }
+
+            processImage(files) {
+                if (!files || files.length === 0) return;
+                const file = files[0];
+                
+                if (!file.type.match('image.*')) {
+                    this.notify('Vui lòng chọn file hình ảnh hợp lệ.', false);
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        this.userImage = img;
+                        this.placeholder.classList.add('hidden');
+                        this.downloadBtn.disabled = false;
+                        this.resetBtn.disabled = false;
+                        this.composeArtwork();
+                        this.notify('Cắt dán thành công!', true);
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+
+            // === HỆ THỐNG RENDER: SỔ TAY THANH XUÂN ===
+            composeArtwork() {
+                this.ctx.clearRect(0, 0, ART_CONFIG.SIZE, ART_CONFIG.SIZE);
+                
+                this.drawNotebookBackground();
+                this.drawDecorations(); // Vẽ nền các sticker trang trí (nằm dưới ảnh)
+                
+                if (this.userImage) {
+                    this.drawPolaroidPhoto(this.userImage);
+                }
+
+                this.drawForegroundDecorations(); // Vẽ các sticker đè lên khung ảnh
+                this.drawScrapbookTypography();
+            }
+
+            // 1. Nền giấy kẻ ô ly xanh nhạt
+            drawNotebookBackground() {
+                const s = ART_CONFIG.SIZE;
+                this.ctx.fillStyle = '#f8fafc';
+                this.ctx.fillRect(0, 0, s, s);
+
+                this.ctx.lineWidth = 2;
+                this.ctx.strokeStyle = '#e2e8f0'; 
+                const gridSize = 60;
+                
+                for(let i = 0; i < s; i += gridSize) {
+                    this.ctx.beginPath(); this.ctx.moveTo(i, 0); this.ctx.lineTo(i, s); this.ctx.stroke();
+                    this.ctx.beginPath(); this.ctx.moveTo(0, i); this.ctx.lineTo(s, i); this.ctx.stroke();
+                }
+            }
+
+            // Helper: Hiệu ứng viền Sticker (Viền trắng dày + Bóng xanh mờ)
+            applyStickerEffect() {
+                this.ctx.lineWidth = 18;
+                this.ctx.lineJoin = 'round';
+                this.ctx.strokeStyle = '#ffffff'; // Viền trắng
+                this.ctx.shadowColor = 'rgba(66, 133, 244, 0.3)'; // Bóng xanh
+                this.ctx.shadowBlur = 15;
+                this.ctx.shadowOffsetY = 8;
+                this.ctx.stroke(); // Vẽ viền trước
+                
+                // Tắt bóng để chuẩn bị tô màu nền
+                this.ctx.shadowColor = 'transparent';
+            }
+
+            // 2. Trang trí nền (Sao, hình khối bay lơ lửng)
+            drawDecorations() {
+                this.ctx.save();
+                
+                // --- Ngôi sao vàng lớn (Góc trên) ---
+                this.ctx.translate(350, 150);
+                this.ctx.rotate(15 * Math.PI / 180);
+                this.ctx.beginPath();
+                this.drawStarPath(0, 0, 4, 60, 25);
+                this.applyStickerEffect();
+                this.ctx.fillStyle = ART_CONFIG.COLOR_YELLOW;
+                this.ctx.fill();
+                this.ctx.restore();
+
+                // --- Ngôi sao xanh nhỏ (Góc trái) ---
+                this.ctx.save();
+                this.ctx.translate(120, 550);
+                this.ctx.rotate(-20 * Math.PI / 180);
+                this.ctx.beginPath();
+                this.drawStarPath(0, 0, 4, 40, 15);
+                this.applyStickerEffect();
+                // Gradient cho sao nhỏ
+                const grad = this.ctx.createLinearGradient(-20,-20,20,20);
+                grad.addColorStop(0, '#A8C7FA'); grad.addColorStop(1, ART_CONFIG.COLOR_BLUE);
+                this.ctx.fillStyle = grad;
+                this.ctx.fill();
+                
+                // Vẽ thêm tia sáng tỏa ra
+                this.ctx.strokeStyle = ART_CONFIG.COLOR_BLUE;
+                this.ctx.lineWidth = 4;
+                this.ctx.beginPath(); this.ctx.moveTo(-60, 0); this.ctx.lineTo(-40, 0); this.ctx.stroke();
+                this.ctx.beginPath(); this.ctx.moveTo(60, 0); this.ctx.lineTo(40, 0); this.ctx.stroke();
+                this.ctx.restore();
+            }
+
+            // 3. Khung ảnh Polaroid (Nghiêng nhẹ, viền trắng lớn)
+            drawPolaroidPhoto(img) {
+                const s = ART_CONFIG.SIZE;
+                this.ctx.save();
+                
+                // Dịch chuyển tâm và xoay ảnh nghiêng -2 độ
+                this.ctx.translate(s/2 + 20, s/2 - 40);
+                this.ctx.rotate(-2.5 * Math.PI / 180);
+
+                const pW = 680; // Polaroid Width
+                const pH = 780; // Polaroid Height (Dài hơn ở dưới)
+                
+                // Bóng đổ thật cho khung ảnh giấy
+                this.ctx.shadowColor = 'rgba(0, 0, 0, 0.15)';
+                this.ctx.shadowBlur = 30;
+                this.ctx.shadowOffsetY = 15;
+                
+                // Vẽ nền khung giấy trắng
+                this.ctx.fillStyle = '#ffffff';
+                this.ctx.fillRect(-pW/2, -pH/2, pW, pH);
+                
+                // Tắt bóng đổ để vẽ ảnh
+                this.ctx.shadowColor = 'transparent';
+                
+                // Xác định khu vực chứa ảnh bên trong viền Polaroid
+                const imgMargin = 25;
+                const bottomMargin = 120; // Chừa phần dưới trắng nhiều hơn
+                const cX = -pW/2 + imgMargin;
+                const cY = -pH/2 + imgMargin;
+                const cW = pW - imgMargin*2;
+                const cH = pH - imgMargin - bottomMargin;
+
+                // Cắt khung (Clip mask)
+                this.ctx.beginPath();
+                this.ctx.rect(cX, cY, cW, cH);
+                this.ctx.clip();
+                
+                // Draw Image Cover
+                const scale = Math.max(cW / img.width, cH / img.height);
+                const drawW = img.width * scale;
+                const drawH = img.height * scale;
+                const drawX = cX + (cW - drawW) / 2;
+                const drawY = cY + (cH - drawH) / 2;
+                
+                this.ctx.drawImage(img, drawX, drawY, drawW, drawH);
+                
+                this.ctx.restore();
+            }
+
+            // 4. Trang trí đè lên ảnh (Tàu vũ trụ/Máy bay giấy góc phải)
+            drawForegroundDecorations() {
+                this.ctx.save();
+                
+                // --- Mũi tên xanh (Paper Plane) Góc dưới phải ---
+                this.ctx.translate(850, 850);
+                this.ctx.rotate(-45 * Math.PI / 180);
+                this.ctx.beginPath();
+                // Vẽ dáng máy bay giấy đơn giản
+                this.ctx.moveTo(0, -60);
+                this.ctx.lineTo(40, 60);
+                this.ctx.lineTo(0, 30);
+                this.ctx.lineTo(-40, 60);
+                this.ctx.closePath();
+                
+                this.applyStickerEffect();
+                this.ctx.fillStyle = ART_CONFIG.COLOR_BLUE;
+                this.ctx.fill();
+                
+                // Nét gập bên trong máy bay
+                this.ctx.strokeStyle = '#ffffff';
+                this.ctx.lineWidth = 4;
+                this.ctx.beginPath();
+                this.ctx.moveTo(0, -60);
+                this.ctx.lineTo(0, 30);
+                this.ctx.stroke();
+
+                this.ctx.restore();
+            }
+
+            // 5. Typography dạng Sticker (Băng dính giấy & Vệt sơn)
+            drawScrapbookTypography() {
+                const s = ART_CONFIG.SIZE;
+                this.ctx.save();
+
+                // A. TEAM TAG (Góc trên trái)
+                this.ctx.translate(220, 180);
+                this.ctx.rotate(-6 * Math.PI / 180);
+                
+                // Dải giấy rách
+                this.ctx.fillStyle = '#ffffff';
+                this.ctx.shadowColor = 'rgba(0,0,0,0.1)';
+                this.ctx.shadowBlur = 10;
+                this.ctx.shadowOffsetY = 5;
+                this.ctx.beginPath();
+                this.ctx.moveTo(-120, -40);
+                this.ctx.lineTo(120, -35); // Cố tình vẽ xéo
+                this.ctx.lineTo(115, 35);
+                this.ctx.lineTo(-125, 40);
+                this.ctx.closePath();
+                this.ctx.fill();
+                
+                // Text "#Team HPU"
+                this.ctx.shadowColor = 'transparent';
+                this.ctx.fillStyle = '#111827';
+                this.ctx.font = `900 45px ${ART_CONFIG.FONT_HEADING}`;
+                this.ctx.textAlign = 'center';
+                this.ctx.textBaseline = 'middle';
+                this.ctx.fillText("#Team HPU", 0, 5);
+                
+                this.ctx.restore();
+                
+                // B. KHỐI TEXT CHÍNH Ở DƯỚI
+                this.ctx.save();
+                this.ctx.translate(s/2, 800);
+
+                // --- Miếng giấy trắng "Mình là" ---
+                this.ctx.save();
+                this.ctx.translate(-150, 0);
+                this.ctx.rotate(-3 * Math.PI / 180);
+                
+                this.ctx.fillStyle = '#ffffff';
+                this.ctx.shadowColor = 'rgba(0,0,0,0.1)';
+                this.ctx.shadowBlur = 15;
+                this.ctx.shadowOffsetY = 8;
+                // Hình chữ nhật bo cong nhẹ
+                this.ctx.beginPath();
+                this.ctx.roundRect(-140, -40, 280, 80, 8);
+                this.ctx.fill();
+                
+                this.ctx.shadowColor = 'transparent';
+                this.ctx.fillStyle = '#000000';
+                this.ctx.font = `900 55px ${ART_CONFIG.FONT_HEADING}`;
+                this.ctx.textAlign = 'center';
+                this.ctx.textBaseline = 'middle';
+                this.ctx.fillText("Mình là", 0, 5);
+                this.ctx.restore();
+
+                // --- Vệt sơn xanh "Sinh viên HPU" ---
+                this.ctx.save();
+                this.ctx.translate(50, 90);
+                this.ctx.rotate(1 * Math.PI / 180); // Nghiêng nhẹ ngược lại
+                
+                this.ctx.fillStyle = ART_CONFIG.COLOR_BLUE;
+                this.ctx.shadowColor = 'rgba(66, 133, 244, 0.3)';
+                this.ctx.shadowBlur = 20;
+                this.ctx.shadowOffsetY = 10;
+                // Dùng Path vẽ vệt sơn gồ ghề
+                this.ctx.beginPath();
+                this.ctx.moveTo(-350, -45);
+                this.ctx.lineTo(350, -50);
+                this.ctx.lineTo(340, 50);
+                this.ctx.lineTo(-360, 45);
+                this.ctx.closePath();
+                this.ctx.fill();
+
+                this.ctx.shadowColor = 'transparent';
+                this.ctx.fillStyle = '#ffffff';
+                this.ctx.font = `900 65px ${ART_CONFIG.FONT_HEADING}`;
+                this.ctx.textAlign = 'center';
+                this.ctx.textBaseline = 'middle';
+                this.ctx.fillText("HPU Ambassador", 0, 5);
+                this.ctx.restore();
+
+                // --- Subtitle "Đại sứ Sinh viên" (Viền trắng, bóng xanh) ---
+                this.ctx.save();
+                this.ctx.translate(30, 190);
+                this.ctx.textAlign = 'center';
+                this.ctx.textBaseline = 'middle';
+                this.ctx.font = `900 55px ${ART_CONFIG.FONT_HEADING}`;
+                
+                const subtitleText = "Sinh viên HPU";
+                
+                // Stroke viền trắng cực dày (Hiệu ứng Sticker Glow)
+                this.ctx.lineWidth = 15;
+                this.ctx.strokeStyle = '#ffffff';
+                this.ctx.lineJoin = 'round';
+                this.ctx.shadowColor = 'rgba(66, 133, 244, 0.4)'; // Bóng đổ xanh nhạt
+                this.ctx.shadowBlur = 15;
+                this.ctx.shadowOffsetY = 8;
+                this.ctx.strokeText(subtitleText, 0, 0);
+                
+                // Text đen lấp lõi
+                this.ctx.shadowColor = 'transparent';
+                this.ctx.fillStyle = '#111827';
+                this.ctx.fillText(subtitleText, 0, 0);
+                
+                this.ctx.restore();
+
+                this.ctx.restore();
+            }
+
+            // Utils: Vẽ hình ngôi sao
+            drawStarPath(cx, cy, spikes, outerRadius, innerRadius) {
+                let rot = Math.PI / 2 * 3;
+                let x = cx, y = cy;
+                let step = Math.PI / spikes;
+
+                this.ctx.moveTo(cx, cy - outerRadius);
+                for (let i = 0; i < spikes; i++) {
+                    x = cx + Math.cos(rot) * outerRadius;
+                    y = cy + Math.sin(rot) * outerRadius;
+                    this.ctx.lineTo(x, y);
+                    rot += step;
+
+                    x = cx + Math.cos(rot) * innerRadius;
+                    y = cy + Math.sin(rot) * innerRadius;
+                    this.ctx.lineTo(x, y);
+                    rot += step;
+                }
+                this.ctx.closePath();
+            }
+
+            exportArtwork() {
+                if (!this.userImage) return;
+                const dataStr = this.canvas.toDataURL('image/png', 1.0);
+                const link = document.createElement('a');
+                link.download = `HPU_Scrapbook_Avatar_${Date.now()}.png`;
+                link.href = dataStr;
+                link.click();
+                this.notify('Tải Poster thành công! 📸', true);
+            }
+
+            clearStage() {
+                this.userImage = null;
+                this.fileInput.value = "";
+                this.ctx.clearRect(0, 0, ART_CONFIG.SIZE, ART_CONFIG.SIZE);
+                this.placeholder.classList.remove('hidden');
+                this.downloadBtn.disabled = true;
+                this.resetBtn.disabled = true;
+                this.notify('Đã làm sạch sổ tay.');
+            }
+
+            notify(msg, isSuccess = true) {
+                const container = document.getElementById('toastContainer');
+                const toast = document.createElement('div');
+                toast.className = `toast-msg`;
+                
+                const iconSVG = isSuccess 
+                    ? `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4285F4" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`
+                    : `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EA4335" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>`;
+
+                toast.innerHTML = `${iconSVG} <span>${msg}</span>`;
+                
+                container.appendChild(toast);
+                setTimeout(() => toast.classList.add('show'), 50);
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    setTimeout(() => toast.remove(), 400);
+                }, 3000);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            new ScrapbookEngine();
+        });
+
+    </script>
+</body>
+
+</html>
