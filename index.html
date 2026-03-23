@@ -266,7 +266,6 @@
             max-width: 540px;
             aspect-ratio: 1 / 1;
             border-radius: 8px;
-            /* Vuông vức hơn để hợp viền ảnh */
             background: transparent;
             position: relative;
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -359,7 +358,7 @@
                     Student Edition
                 </div>
                 <h1 class="main-heading">HPU Scrapbook<br>Profile.</h1>
-                <p class="sub-heading">Tạo ảnh đại sứ sinh viên HPU</p>
+                <p class="sub-heading">Tạo ảnh đại sứ sinh viên HPU với các Sticker dễ thương</p>
             </div>
 
             <!-- Upload Box -->
@@ -381,6 +380,10 @@
             <div class="btn-group">
                 <button class="btn btn-secondary" id="resetBtn" disabled>
                     Làm lại
+                </button>
+                <button class="btn btn-secondary" id="shuffleBtn" disabled style="background: #E8F0FE; color: var(--color-blue); border: 1px solid var(--color-blue-light); flex: 0.5;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>
+                    Đổi
                 </button>
                 <button class="btn btn-primary" id="downloadBtn" disabled>
                     Tải Poster
@@ -414,8 +417,9 @@
     <script>
         /**
          * ==========================================================================
-         * HÂN'S CREATIVE STUDIO -> SCRAPBOOK ENGINE
-         * Kỹ thuật: Polaroid Clip Mask, Sticker Stroke (White Line + Offset Shadow)
+         * CREATIVE STUDIO -> SCRAPBOOK ENGINE
+         * Kỹ thuật: Polaroid Clip Mask, Smart CORS Image Pipeline
+         * 🌟 BỐ CỤC ĐƯỢC HÂN TÁI CẤU TRÚC: "FRAMING" RỘNG RÃI & MỀM MẠI! 🌟
          * ==========================================================================
          */
 
@@ -437,13 +441,65 @@
                 this.dropZone = document.getElementById('dropZone');
                 this.downloadBtn = document.getElementById('downloadBtn');
                 this.resetBtn = document.getElementById('resetBtn');
+                this.shuffleBtn = document.getElementById('shuffleBtn'); // Nút đổi sticker
                 this.placeholder = document.getElementById('canvasPlaceholder');
                 
                 this.userImage = null;
+                this.stickers = {}; 
+                this.currentStickerLayout = []; // Lưu trữ tổ hợp 3 sticker hiện tại
+
+                this.loadStickers();
                 
                 document.fonts.ready.then(() => {
                     this.initEvents();
                 });
+            }
+
+            // --- SMART IMAGE PIPELINE (Chống lỗi CORS) ---
+            loadStickers() {
+                const sources = {
+                    heart: 'https://googlestudentambassador.vn/wp-content/uploads/2025/12/Heart-Dark-1024x1024.webp',
+                    element: 'https://googlestudentambassador.vn/wp-content/uploads/2025/12/element.webp',
+                    pen: 'https://googlestudentambassador.vn/wp-content/uploads/2025/12/Pen-Dark-1024x1024.webp',
+                    dino: 'https://googlestudentambassador.vn/wp-content/uploads/2025/12/Dino-Dark-1024x1024.webp',
+                    rocket: 'https://googlestudentambassador.vn/wp-content/uploads/2025/12/Rocket-Dark-1024x1024.webp',
+                    speaker: 'https://googlestudentambassador.vn/wp-content/uploads/2025/12/Speaker-Dark-1024x1024.webp'
+                };
+
+                for (let key in sources) {
+                    let img = new Image();
+                    img.crossOrigin = "Anonymous"; 
+                    
+                    // Thử thách 1: Tải trực tiếp
+                    img.src = sources[key];
+                    
+                    img.onload = () => {
+                        this.stickers[key] = img;
+                        if (this.userImage) this.composeArtwork();
+                    };
+
+                    // Thử thách 2: Dùng Proxy nếu bị lỗi CORS
+                    img.onerror = () => {
+                        let proxyImg = new Image();
+                        proxyImg.crossOrigin = "Anonymous";
+                        proxyImg.src = `https://api.allorigins.win/raw?url=${encodeURIComponent(sources[key])}`;
+                        
+                        proxyImg.onload = () => {
+                            this.stickers[key] = proxyImg;
+                            if (this.userImage) this.composeArtwork();
+                        };
+                        
+                        // Thử thách 3: Bỏ CORS (Sẽ lưu ảnh bằng tay nếu bị Tainted Canvas)
+                        proxyImg.onerror = () => {
+                            let noCorsImg = new Image();
+                            noCorsImg.src = sources[key];
+                            noCorsImg.onload = () => {
+                                this.stickers[key] = noCorsImg;
+                                if (this.userImage) this.composeArtwork();
+                            };
+                        };
+                    };
+                }
             }
 
             initEvents() {
@@ -467,6 +523,46 @@
                 this.dropZone.addEventListener('drop', (e) => this.processImage(e.dataTransfer.files));
                 this.downloadBtn.addEventListener('click', () => this.exportArtwork());
                 this.resetBtn.addEventListener('click', () => this.clearStage());
+                
+                // Kích hoạt bốc thăm lại Sticker khi nhấn nút Đổi
+                this.shuffleBtn.addEventListener('click', () => {
+                    this.generateRandomLayout();
+                    this.composeArtwork();
+                    this.notify('Đã xáo trộn 3 sticker ngẫu nhiên! 🎲', true);
+                });
+            }
+
+            // --- THUẬT TOÁN TẠO BỐ CỤC RANDOM 3 STICKERS TỪ 6 VỊ TRÍ ---
+            generateRandomLayout() {
+                const availableKeys = ['heart', 'element', 'pen', 'dino', 'rocket', 'speaker'];
+                // 1. Lấy ngẫu nhiên 3 icon trong danh sách
+                const shuffledKeys = availableKeys.sort(() => 0.5 - Math.random());
+                const selectedKeys = shuffledKeys.slice(0, 3);
+
+                // 2. Định nghĩa 6 "vùng an toàn" không bao giờ đè mặt nhân vật
+                const SLOTS = [
+                    { x: 160, y: 320, minW: 140, maxW: 180, baseRot: -15 }, // Góc trên trái (dưới tag HPU)
+                    { x: 920, y: 260, minW: 160, maxW: 220, baseRot: 15 },  // Góc trên phải
+                    { x: 160, y: 650, minW: 160, maxW: 200, baseRot: -5 },  // Giữa cánh trái
+                    { x: 920, y: 600, minW: 160, maxW: 200, baseRot: 20 },  // Giữa cánh phải
+                    { x: 200, y: 880, minW: 180, maxW: 240, baseRot: 10 },  // Góc dưới trái
+                    { x: 900, y: 880, minW: 200, maxW: 260, baseRot: -15 }  // Góc dưới phải
+                ];
+
+                // 3. Lấy ngẫu nhiên 3 vùng an toàn
+                const shuffledSlots = [...SLOTS].sort(() => 0.5 - Math.random());
+                const selectedSlots = shuffledSlots.slice(0, 3);
+
+                // 4. Ghép Icon vào Vùng và thêm "gia vị" ngẫu nhiên (Offset & Xoay)
+                this.currentStickerLayout = selectedKeys.map((key, index) => {
+                    const slot = selectedSlots[index];
+                    const offsetX = (Math.random() - 0.5) * 40; // Xê dịch X một chút
+                    const offsetY = (Math.random() - 0.5) * 40; // Xê dịch Y một chút
+                    const width = slot.minW + Math.random() * (slot.maxW - slot.minW);
+                    const rotation = slot.baseRot + (Math.random() - 0.5) * 30; // Xoay tự nhiên
+
+                    return { key, x: slot.x + offsetX, y: slot.y + offsetY, w: width, r: rotation };
+                });
             }
 
             processImage(files) {
@@ -486,30 +582,36 @@
                         this.placeholder.classList.add('hidden');
                         this.downloadBtn.disabled = false;
                         this.resetBtn.disabled = false;
+                        this.shuffleBtn.disabled = false; // Mở khóa nút xáo trộn
+                        
+                        // Lần đầu tải ảnh sẽ quay số layout mới
+                        this.generateRandomLayout(); 
                         this.composeArtwork();
-                        this.notify('Cắt dán thành công!', true);
+                        
+                        this.notify('Khung ảnh gọn gàng & thanh lịch! ✨', true);
                     };
                     img.src = e.target.result;
                 };
                 reader.readAsDataURL(file);
             }
 
-            // === HỆ THỐNG RENDER: SỔ TAY THANH XUÂN ===
+            // === HỆ THỐNG RENDER CHÍNH ===
             composeArtwork() {
                 this.ctx.clearRect(0, 0, ART_CONFIG.SIZE, ART_CONFIG.SIZE);
                 
+                // Vẽ lưới vở học sinh
                 this.drawNotebookBackground();
-                this.drawDecorations(); // Vẽ nền các sticker trang trí (nằm dưới ảnh)
                 
+                // Vẽ ảnh Polaroid ở chính giữa
                 if (this.userImage) {
                     this.drawPolaroidPhoto(this.userImage);
                 }
 
-                this.drawForegroundDecorations(); // Vẽ các sticker đè lên khung ảnh
-                this.drawScrapbookTypography();
+                // Vẽ Typography và các Sticker ĐÈ LÊN khung ảnh
+                // (Hân gộp chung để đảm bảo mọi thứ đè lên ảnh một cách mượt mà nhất)
+                this.drawForegroundElements(); 
             }
 
-            // 1. Nền giấy kẻ ô ly xanh nhạt
             drawNotebookBackground() {
                 const s = ART_CONFIG.SIZE;
                 this.ctx.fillStyle = '#f8fafc';
@@ -525,93 +627,52 @@
                 }
             }
 
-            // Helper: Hiệu ứng viền Sticker (Viền trắng dày + Bóng xanh mờ)
-            applyStickerEffect() {
-                this.ctx.lineWidth = 18;
-                this.ctx.lineJoin = 'round';
-                this.ctx.strokeStyle = '#ffffff'; // Viền trắng
-                this.ctx.shadowColor = 'rgba(66, 133, 244, 0.3)'; // Bóng xanh
-                this.ctx.shadowBlur = 15;
-                this.ctx.shadowOffsetY = 8;
-                this.ctx.stroke(); // Vẽ viền trước
+            drawStickerImage(img, x, y, targetWidth, rotationDeg) {
+                if (!img || !img.complete || img.naturalWidth === 0) return; 
                 
-                // Tắt bóng để chuẩn bị tô màu nền
-                this.ctx.shadowColor = 'transparent';
-            }
-
-            // 2. Trang trí nền (Sao, hình khối bay lơ lửng)
-            drawDecorations() {
+                const aspect = img.height / img.width;
+                const targetHeight = targetWidth * aspect;
+                
                 this.ctx.save();
-                
-                // --- Ngôi sao vàng lớn (Góc trên) ---
-                this.ctx.translate(350, 150);
-                this.ctx.rotate(15 * Math.PI / 180);
-                this.ctx.beginPath();
-                this.drawStarPath(0, 0, 4, 60, 25);
-                this.applyStickerEffect();
-                this.ctx.fillStyle = ART_CONFIG.COLOR_YELLOW;
-                this.ctx.fill();
-                this.ctx.restore();
-
-                // --- Ngôi sao xanh nhỏ (Góc trái) ---
-                this.ctx.save();
-                this.ctx.translate(120, 550);
-                this.ctx.rotate(-20 * Math.PI / 180);
-                this.ctx.beginPath();
-                this.drawStarPath(0, 0, 4, 40, 15);
-                this.applyStickerEffect();
-                // Gradient cho sao nhỏ
-                const grad = this.ctx.createLinearGradient(-20,-20,20,20);
-                grad.addColorStop(0, '#A8C7FA'); grad.addColorStop(1, ART_CONFIG.COLOR_BLUE);
-                this.ctx.fillStyle = grad;
-                this.ctx.fill();
-                
-                // Vẽ thêm tia sáng tỏa ra
-                this.ctx.strokeStyle = ART_CONFIG.COLOR_BLUE;
-                this.ctx.lineWidth = 4;
-                this.ctx.beginPath(); this.ctx.moveTo(-60, 0); this.ctx.lineTo(-40, 0); this.ctx.stroke();
-                this.ctx.beginPath(); this.ctx.moveTo(60, 0); this.ctx.lineTo(40, 0); this.ctx.stroke();
+                this.ctx.translate(x, y);
+                this.ctx.rotate(rotationDeg * Math.PI / 180);
+                this.ctx.drawImage(img, -targetWidth/2, -targetHeight/2, targetWidth, targetHeight);
                 this.ctx.restore();
             }
 
-            // 3. Khung ảnh Polaroid (Nghiêng nhẹ, viền trắng lớn)
+            // --- VẼ KHUNG ẢNH POLAROID TILT SANG PHẢI ---
             drawPolaroidPhoto(img) {
                 const s = ART_CONFIG.SIZE;
                 this.ctx.save();
                 
-                // Dịch chuyển tâm và xoay ảnh nghiêng -2 độ
-                this.ctx.translate(s/2 + 20, s/2 - 40);
-                this.ctx.rotate(-2.5 * Math.PI / 180);
+                // Căn chính giữa, nghiêng một chút sang PHẢI (như ảnh gốc)
+                this.ctx.translate(s/2, s/2 - 20); 
+                this.ctx.rotate(2 * Math.PI / 180);
 
-                const pW = 680; // Polaroid Width
-                const pH = 780; // Polaroid Height (Dài hơn ở dưới)
+                // Thu nhỏ Polaroid lại một chút để các icon có không gian thở ở viền
+                const pW = 660; 
+                const pH = 780; 
                 
-                // Bóng đổ thật cho khung ảnh giấy
                 this.ctx.shadowColor = 'rgba(0, 0, 0, 0.15)';
                 this.ctx.shadowBlur = 30;
                 this.ctx.shadowOffsetY = 15;
                 
-                // Vẽ nền khung giấy trắng
                 this.ctx.fillStyle = '#ffffff';
                 this.ctx.fillRect(-pW/2, -pH/2, pW, pH);
                 
-                // Tắt bóng đổ để vẽ ảnh
                 this.ctx.shadowColor = 'transparent';
                 
-                // Xác định khu vực chứa ảnh bên trong viền Polaroid
                 const imgMargin = 25;
-                const bottomMargin = 120; // Chừa phần dưới trắng nhiều hơn
+                const bottomMargin = 120;
                 const cX = -pW/2 + imgMargin;
                 const cY = -pH/2 + imgMargin;
                 const cW = pW - imgMargin*2;
                 const cH = pH - imgMargin - bottomMargin;
 
-                // Cắt khung (Clip mask)
                 this.ctx.beginPath();
                 this.ctx.rect(cX, cY, cW, cH);
                 this.ctx.clip();
                 
-                // Draw Image Cover
                 const scale = Math.max(cW / img.width, cH / img.height);
                 const drawW = img.width * scale;
                 const drawH = img.height * scale;
@@ -623,84 +684,59 @@
                 this.ctx.restore();
             }
 
-            // 4. Trang trí đè lên ảnh (Tàu vũ trụ/Máy bay giấy góc phải)
-            drawForegroundDecorations() {
-                this.ctx.save();
-                
-                // --- Mũi tên xanh (Paper Plane) Góc dưới phải ---
-                this.ctx.translate(850, 850);
-                this.ctx.rotate(-45 * Math.PI / 180);
-                this.ctx.beginPath();
-                // Vẽ dáng máy bay giấy đơn giản
-                this.ctx.moveTo(0, -60);
-                this.ctx.lineTo(40, 60);
-                this.ctx.lineTo(0, 30);
-                this.ctx.lineTo(-40, 60);
-                this.ctx.closePath();
-                
-                this.applyStickerEffect();
-                this.ctx.fillStyle = ART_CONFIG.COLOR_BLUE;
-                this.ctx.fill();
-                
-                // Nét gập bên trong máy bay
-                this.ctx.strokeStyle = '#ffffff';
-                this.ctx.lineWidth = 4;
-                this.ctx.beginPath();
-                this.ctx.moveTo(0, -60);
-                this.ctx.lineTo(0, 30);
-                this.ctx.stroke();
-
-                this.ctx.restore();
-            }
-
-            // 5. Typography dạng Sticker (Băng dính giấy & Vệt sơn)
-            drawScrapbookTypography() {
+            // 🎨 HÂN SẮP XẾP LẠI TỌA ĐỘ STICKER VÀ TYPOGRAPHY Ở ĐÂY NÈ!
+            drawForegroundElements() {
                 const s = ART_CONFIG.SIZE;
-                this.ctx.save();
-
-                // A. TEAM TAG (Góc trên trái)
-                this.ctx.translate(220, 180);
-                this.ctx.rotate(-6 * Math.PI / 180);
                 
-                // Dải giấy rách (Đã được kéo dài trục X để ôm trọn chữ U)
+                // ===== 1. CÁC STICKER BAY XUNG QUANH (RANDOM 3/6) =====
+                if (this.currentStickerLayout) {
+                    this.currentStickerLayout.forEach(item => {
+                        this.drawStickerImage(this.stickers[item.key], item.x, item.y, item.w, item.r);
+                    });
+                }
+
+                // ===== 2. TYPOGRAPHY (CHỮ VÀ BĂNG KEO) =====
+
+                // A. TEAM TAG (Góc trên trái, đè lên đỉnh góc trái Polaroid)
+                this.ctx.save();
+                this.ctx.translate(240, 190);
+                this.ctx.rotate(-8 * Math.PI / 180);
+                
+                // Băng keo dán rách
                 this.ctx.fillStyle = '#ffffff';
-                this.ctx.shadowColor = 'rgba(0,0,0,0.1)';
+                this.ctx.shadowColor = 'rgba(0,0,0,0.12)';
                 this.ctx.shadowBlur = 10;
-                this.ctx.shadowOffsetY = 5;
+                this.ctx.shadowOffsetY = 6;
                 this.ctx.beginPath();
-                this.ctx.moveTo(-145, -40);
-                this.ctx.lineTo(145, -35); // Mở rộng lề phải
-                this.ctx.lineTo(140, 35);  // Mở rộng lề phải
-                this.ctx.lineTo(-150, 40); // Mở rộng lề trái
+                this.ctx.moveTo(-165, -45);
+                this.ctx.lineTo(165, -40); 
+                this.ctx.lineTo(160, 40);  
+                this.ctx.lineTo(-170, 45); 
                 this.ctx.closePath();
                 this.ctx.fill();
                 
-                // Text "#Team HPU"
+                // Text #Team HPU
                 this.ctx.shadowColor = 'transparent';
                 this.ctx.fillStyle = '#111827';
-                this.ctx.font = `900 45px ${ART_CONFIG.FONT_HEADING}`;
+                this.ctx.font = `900 50px ${ART_CONFIG.FONT_HEADING}`;
                 this.ctx.textAlign = 'center';
                 this.ctx.textBaseline = 'middle';
                 this.ctx.fillText("#Team HPU", 0, 5);
-                
                 this.ctx.restore();
                 
-                // B. KHỐI TEXT CHÍNH Ở DƯỚI
+                // B. KHỐI TEXT CHÍNH (Chính giữa bên dưới, xếp lớp trật tự)
+                
+                // Lớp 1: Băng keo "Mình là"
                 this.ctx.save();
-                this.ctx.translate(s/2, 800);
-
-                // --- Miếng giấy trắng "Mình là" ---
-                this.ctx.save();
-                this.ctx.translate(-150, 0);
-                this.ctx.rotate(-3 * Math.PI / 180);
+                this.ctx.translate(360, 750);
+                this.ctx.rotate(-4 * Math.PI / 180);
                 
                 this.ctx.fillStyle = '#ffffff';
-                this.ctx.shadowColor = 'rgba(0,0,0,0.1)';
+                this.ctx.shadowColor = 'rgba(0,0,0,0.12)';
                 this.ctx.shadowBlur = 15;
                 this.ctx.shadowOffsetY = 8;
-                // Hình chữ nhật bo cong nhẹ
                 this.ctx.beginPath();
-                this.ctx.roundRect(-140, -40, 280, 80, 8);
+                this.ctx.roundRect(-150, -40, 300, 80, 8);
                 this.ctx.fill();
                 
                 this.ctx.shadowColor = 'transparent';
@@ -711,21 +747,20 @@
                 this.ctx.fillText("Mình là", 0, 5);
                 this.ctx.restore();
 
-                // --- Vệt sơn xanh "Sinh viên HPU" ---
+                // Lớp 2: Vệt sơn xanh "HPU Ambassador"
                 this.ctx.save();
-                this.ctx.translate(50, 90);
-                this.ctx.rotate(1 * Math.PI / 180); // Nghiêng nhẹ ngược lại
+                this.ctx.translate(540, 840);
+                // Không xoay, để vệt sơn thẳng thớm cân bằng bố cục
                 
                 this.ctx.fillStyle = ART_CONFIG.COLOR_BLUE;
                 this.ctx.shadowColor = 'rgba(66, 133, 244, 0.3)';
                 this.ctx.shadowBlur = 20;
                 this.ctx.shadowOffsetY = 10;
-                // Dùng Path vẽ vệt sơn gồ ghề
                 this.ctx.beginPath();
-                this.ctx.moveTo(-350, -45);
-                this.ctx.lineTo(350, -50);
-                this.ctx.lineTo(340, 50);
-                this.ctx.lineTo(-360, 45);
+                this.ctx.moveTo(-360, -45);
+                this.ctx.lineTo(360, -50);
+                this.ctx.lineTo(350, 50);
+                this.ctx.lineTo(-370, 45);
                 this.ctx.closePath();
                 this.ctx.fill();
 
@@ -737,72 +772,56 @@
                 this.ctx.fillText("HPU Ambassador", 0, 5);
                 this.ctx.restore();
 
-                // --- Subtitle "Đại sứ Sinh viên" (Viền trắng, bóng xanh) ---
+                // Lớp 3: Subtitle viền nổi "Sinh viên HPU"
                 this.ctx.save();
-                this.ctx.translate(30, 190);
+                this.ctx.translate(540, 930);
                 this.ctx.textAlign = 'center';
                 this.ctx.textBaseline = 'middle';
                 this.ctx.font = `900 55px ${ART_CONFIG.FONT_HEADING}`;
                 
                 const subtitleText = "Sinh viên HPU";
                 
-                // Stroke viền trắng cực dày (Hiệu ứng Sticker Glow)
-                this.ctx.lineWidth = 15;
+                // Viền trắng dày tạo hiệu ứng nổi khối rõ rệt
+                this.ctx.lineWidth = 18;
                 this.ctx.strokeStyle = '#ffffff';
                 this.ctx.lineJoin = 'round';
-                this.ctx.shadowColor = 'rgba(66, 133, 244, 0.4)'; // Bóng đổ xanh nhạt
-                this.ctx.shadowBlur = 15;
-                this.ctx.shadowOffsetY = 8;
+                this.ctx.shadowColor = 'rgba(66, 133, 244, 0.2)'; 
+                this.ctx.shadowBlur = 12;
+                this.ctx.shadowOffsetY = 6;
                 this.ctx.strokeText(subtitleText, 0, 0);
                 
-                // Text đen lấp lõi
+                // Text lõi đen
                 this.ctx.shadowColor = 'transparent';
                 this.ctx.fillStyle = '#111827';
                 this.ctx.fillText(subtitleText, 0, 0);
-                
                 this.ctx.restore();
-
-                this.ctx.restore();
-            }
-
-            // Utils: Vẽ hình ngôi sao
-            drawStarPath(cx, cy, spikes, outerRadius, innerRadius) {
-                let rot = Math.PI / 2 * 3;
-                let x = cx, y = cy;
-                let step = Math.PI / spikes;
-
-                this.ctx.moveTo(cx, cy - outerRadius);
-                for (let i = 0; i < spikes; i++) {
-                    x = cx + Math.cos(rot) * outerRadius;
-                    y = cy + Math.sin(rot) * outerRadius;
-                    this.ctx.lineTo(x, y);
-                    rot += step;
-
-                    x = cx + Math.cos(rot) * innerRadius;
-                    y = cy + Math.sin(rot) * innerRadius;
-                    this.ctx.lineTo(x, y);
-                    rot += step;
-                }
-                this.ctx.closePath();
             }
 
             exportArtwork() {
                 if (!this.userImage) return;
-                const dataStr = this.canvas.toDataURL('image/png', 1.0);
-                const link = document.createElement('a');
-                link.download = `HPU_Scrapbook_Avatar_${Date.now()}.png`;
-                link.href = dataStr;
-                link.click();
-                this.notify('Tải Poster thành công! 📸', true);
+                
+                try {
+                    const dataStr = this.canvas.toDataURL('image/png', 1.0);
+                    const link = document.createElement('a');
+                    link.download = `HPU_Scrapbook_Avatar_${Date.now()}.png`;
+                    link.href = dataStr;
+                    link.click();
+                    this.notify('Tải Poster thành công! 📸', true);
+                } catch (error) {
+                    console.error("Lỗi xuất ảnh (CORS): ", error);
+                    this.notify('Bảo mật chặn tải tự động. Vui lòng CHUỘT PHẢI vào ảnh và chọn "Lưu hình ảnh thành..." nhé!', false);
+                }
             }
 
             clearStage() {
                 this.userImage = null;
                 this.fileInput.value = "";
+                this.currentStickerLayout = [];
                 this.ctx.clearRect(0, 0, ART_CONFIG.SIZE, ART_CONFIG.SIZE);
                 this.placeholder.classList.remove('hidden');
                 this.downloadBtn.disabled = true;
                 this.resetBtn.disabled = true;
+                this.shuffleBtn.disabled = true; // Khóa lại
                 this.notify('Đã làm sạch sổ tay.');
             }
 
@@ -822,7 +841,7 @@
                 setTimeout(() => {
                     toast.classList.remove('show');
                     setTimeout(() => toast.remove(), 400);
-                }, 3000);
+                }, 4000); 
             }
         }
 
