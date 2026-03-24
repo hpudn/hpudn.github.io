@@ -4,44 +4,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HPU Student - Scrapbook Edition</title>
+    <title>HPU Student - Scrapbook Edition ✨</title>
     <!-- Font Outfit cho tiêu đề cứng cáp & Caveat cho nét chữ viết tay -->
-    <link
-        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Caveat:wght@600;700&family=JetBrains+Mono:wght@700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;900&family=Caveat:wght@600;700&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
 
     <style>
         /* ==========================================================================
-           1. CSS VARIABLES: SCRAPBOOK / STUDENT AESTHETICS
+           1. 🎨 BẢNG MÀU & BIẾN SỐ "CẢM XÚC" CỦA HÂN
            ========================================================================== */
         :root {
-            /* Palette Playful */
+            /* Bảng màu rực rỡ nhưng đã được Hân làm dịu lại (Pastel-ish) */
             --color-blue: #4285F4;
-            --color-blue-light: #DCE6F1;
+            --color-blue-hover: #2b6add;
+            --color-blue-light: #e8f0fe;
             --color-yellow: #FBBC05;
             --color-red: #EA4335;
             --color-green: #34A853;
 
-            --color-bg-paper: #F4F7FB;
-            --color-text-main: #202124;
-            --color-text-muted: #5F6368;
+            /* Nền và Chữ */
+            --color-bg-paper: #f8fafc;
+            --color-text-main: #0f172a;
+            --color-text-muted: #64748b;
 
             /* Typography */
             --font-display: 'Outfit', sans-serif;
             --font-hand: 'Caveat', cursive;
             --font-tech: 'JetBrains Mono', monospace;
 
-            /* Effects */
-            --shadow-sticker: 0 8px 24px rgba(66, 133, 244, 0.15);
-            --shadow-polaroid: 0 12px 32px rgba(0, 0, 0, 0.1);
+            /* Bóng đổ siêu thực (Hyper-realistic Shadows) */
+            --shadow-glass: 0 24px 48px -12px rgba(66, 133, 244, 0.15);
+            --shadow-float: 0 30px 60px -15px rgba(0, 0, 0, 0.12);
+            --shadow-inner: inset 0 2px 4px rgba(255, 255, 255, 0.5);
+            --shadow-btn: 0 8px 20px -6px rgba(66, 133, 244, 0.4);
         }
 
         /* ==========================================================================
-           2. GLOBAL RESET & PAPER BACKGROUND
+           2. ☁️ RESET & KHÔNG GIAN NỀN CHIỀU SÂU
            ========================================================================== */
-        *,
-        *::before,
-        *::after {
+        *, *::before, *::after {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
@@ -57,31 +57,73 @@
             overflow-x: hidden;
             background-color: var(--color-bg-paper);
             position: relative;
+            /* Thêm chút padding cho mobile không bị cấn */
+            padding: 2rem 1rem; 
         }
 
-        /* Lưới vở học sinh (Notebook Grid) */
+        /* Lưới vở mộng mơ */
         .bg-grid {
             position: fixed;
             inset: 0;
-            z-index: -1;
+            z-index: -2;
             background-size: 40px 40px;
             background-image:
-                linear-gradient(to right, #e2e8f0 1px, transparent 1px),
-                linear-gradient(to bottom, #e2e8f0 1px, transparent 1px);
-            opacity: 0.7;
+                linear-gradient(to right, rgba(148, 163, 184, 0.15) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(148, 163, 184, 0.15) 1px, transparent 1px);
             pointer-events: none;
         }
 
+        /* Những vệt sáng mờ ảo (Ambient Gradient Blobs) */
+        .bg-blobs {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+            filter: blur(80px);
+            opacity: 0.6;
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            animation: float 10s infinite alternate ease-in-out;
+        }
+
+        .blob-1 {
+            width: 400px; height: 400px;
+            background: rgba(66, 133, 244, 0.3);
+            top: -10%; left: -10%;
+        }
+
+        .blob-2 {
+            width: 300px; height: 300px;
+            background: rgba(251, 188, 5, 0.2);
+            bottom: 10%; right: -5%;
+            animation-delay: -5s;
+        }
+
+        .blob-3 {
+            width: 350px; height: 350px;
+            background: rgba(234, 67, 53, 0.2);
+            top: 40%; left: 40%;
+            animation-duration: 15s;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30px, 50px) scale(1.1); }
+        }
+
         /* ==========================================================================
-           3. LAYOUT & CONTAINERS
+           3. 🪞 LAYOUT & TẤM KÍNH ĐIỀU KHIỂN (GLASSMORPHISM)
            ========================================================================== */
         .app-container {
             width: 100%;
-            max-width: 1200px;
-            padding: 2rem;
+            max-width: 1280px;
             display: grid;
             grid-template-columns: 1fr;
-            gap: 3rem;
+            gap: 4rem;
             position: relative;
             z-index: 10;
         }
@@ -90,105 +132,152 @@
             .app-container {
                 grid-template-columns: 1fr 1fr;
                 align-items: center;
-                gap: 5rem;
+                gap: 6rem;
+                padding: 0 2rem;
             }
         }
 
-        /* Panel chính với phong cách thẻ Card hiện đại, sạch sẽ */
+        /* Panel chính - Đẹp như một tấm thẻ bài trong suốt */
         .control-panel {
-            background: #ffffff;
-            border-radius: 28px;
-            padding: 3rem;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 32px;
+            padding: 3.5rem;
             position: relative;
             display: flex;
             flex-direction: column;
-            gap: 2rem;
-            box-shadow: 0 20px 40px -15px rgba(66, 133, 244, 0.1);
-            border: 2px solid #eef2f6;
+            gap: 2.5rem;
+            box-shadow: var(--shadow-glass), var(--shadow-inner);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            transition: transform 0.3s ease;
+        }
+
+        .control-panel:hover {
+            transform: translateY(-5px);
         }
 
         /* ==========================================================================
-           4. TYPOGRAPHY
+           4. 🖋️ NGHỆ THUẬT SẮP CHỮ (TYPOGRAPHY)
            ========================================================================== */
         .badge {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            background: #E8F0FE;
+            background: linear-gradient(135deg, var(--color-blue-light), #ffffff);
             color: var(--color-blue);
-            padding: 0.5rem 1rem;
+            padding: 0.6rem 1.2rem;
             border-radius: 100px;
             font-family: var(--font-tech);
-            font-size: 0.8rem;
+            font-size: 0.85rem;
+            font-weight: 700;
             text-transform: uppercase;
-            width: max-content;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 12px rgba(66, 133, 244, 0.1);
+            border: 1px solid rgba(66, 133, 244, 0.2);
         }
 
         .main-heading {
-            font-size: clamp(2rem, 4vw, 3rem);
+            font-size: clamp(2.5rem, 5vw, 4rem);
             font-weight: 900;
-            line-height: 1.1;
-            letter-spacing: -1px;
-            color: var(--color-text-main);
-            margin-top: 1rem;
-            margin-bottom: 0.5rem;
+            line-height: 1.05;
+            letter-spacing: -1.5px;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            /* Hiệu ứng chữ chuyển màu lấp lánh */
+            background: linear-gradient(135deg, #1e293b, var(--color-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .sub-heading {
             color: var(--color-text-muted);
-            font-size: 1.05rem;
+            font-size: 1.15rem;
             line-height: 1.6;
             font-weight: 400;
         }
 
         /* ==========================================================================
-           5. UPLOAD AREA
+           5. 💌 KHU VỰC THẢ ẢNH TƯƠNG TÁC
            ========================================================================== */
         .upload-box {
-            border: 2px dashed #cbd5e1;
-            border-radius: 20px;
-            padding: 3rem 2rem;
-            text-align: center;
-            background: #f8fafc;
-            transition: all 0.3s ease;
-            cursor: pointer;
             position: relative;
+            border: 2px dashed #cbd5e1;
+            border-radius: 24px;
+            padding: 3.5rem 2rem;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.5);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        /* Lớp viền chạy ảo diệu khi hover */
+        .upload-box::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 24px;
+            padding: 2px;
+            background: linear-gradient(135deg, var(--color-blue), var(--color-yellow), var(--color-red));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.4s ease;
         }
 
         .upload-box:hover,
-        .upload-box.dragover {
-            background: #E8F0FE;
-            border-color: var(--color-blue);
+        .upload-box.dragover,
+        .upload-box.has-file {
+            background: rgba(232, 240, 254, 0.6);
+            border-color: transparent;
             transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(66, 133, 244, 0.1);
+        }
+
+        .upload-box:hover::before,
+        .upload-box.dragover::before,
+        .upload-box.has-file::before {
+            opacity: 1;
         }
 
         .upload-icon {
-            width: 60px;
-            height: 60px;
+            width: 72px;
+            height: 72px;
             background: #ffffff;
-            border-radius: 16px;
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 1.25rem;
+            margin: 0 auto 1.5rem;
             color: var(--color-blue);
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s ease;
+            box-shadow: 0 8px 24px rgba(66, 133, 244, 0.15);
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
 
         .upload-box:hover .upload-icon {
-            transform: rotate(-10deg) scale(1.1);
+            transform: rotate(-15deg) scale(1.1);
+            color: var(--color-yellow);
+        }
+
+        .upload-box.has-file .upload-icon {
+            color: var(--color-green);
+            transform: scale(1.1);
         }
 
         .upload-box h3 {
             font-family: var(--font-display);
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: 700;
-            margin-bottom: 0.25rem;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+            transition: color 0.3s ease;
         }
 
         .upload-box p {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             color: var(--color-text-muted);
         }
 
@@ -198,89 +287,136 @@
             opacity: 0;
             cursor: pointer;
             width: 100%;
+            z-index: 10;
         }
 
         /* ==========================================================================
-           6. BUTTONS
+           6. 🎛️ NÚT BẤM (BUTTONS) MỀM MẠI
            ========================================================================== */
         .btn-group {
             display: flex;
             gap: 1rem;
+            flex-wrap: wrap; /* Cho mobile */
         }
 
         .btn {
             flex: 1;
-            padding: 1rem;
-            border-radius: 14px;
+            min-width: 120px;
+            padding: 1.1rem;
+            border-radius: 16px;
             font-family: var(--font-display);
             font-weight: 700;
-            font-size: 1rem;
+            font-size: 1.05rem;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
-            transition: all 0.2s ease;
+            gap: 0.6rem;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             border: none;
+            position: relative;
+            overflow: hidden;
         }
+
+        /* Hiệu ứng ripple nhẹ khi click (phần chìm) */
+        .btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(255,255,255,0.2);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .btn:active::after { opacity: 1; }
 
         .btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
             pointer-events: none;
+            filter: grayscale(100%);
         }
 
         .btn-primary {
-            background: var(--color-blue);
+            background: linear-gradient(135deg, var(--color-blue), #2b5cce);
             color: #ffffff;
-            box-shadow: 0 4px 12px rgba(66, 133, 244, 0.3);
+            box-shadow: var(--shadow-btn);
+            flex: 1.5; /* Nút chính to hơn một chút */
         }
 
         .btn-primary:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(66, 133, 244, 0.4);
-            background: #3367d6;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 24px -6px rgba(66, 133, 244, 0.5);
         }
 
         .btn-secondary {
             background: #f1f5f9;
             color: var(--color-text-main);
+            border: 1px solid #e2e8f0;
         }
 
         .btn-secondary:hover:not(:disabled) {
-            background: #e2e8f0;
+            background: #ffffff;
+            border-color: #cbd5e1;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.05);
         }
 
         /* ==========================================================================
-           7. CANVAS PREVIEW AREA
+           7. 🖼️ KHU VỰC HIỂN THỊ (CANVAS PREVIEW & WASHI TAPE)
            ========================================================================== */
         .preview-panel {
             display: flex;
             justify-content: center;
             align-items: center;
             position: relative;
+            perspective: 1000px; /* Thêm chiều sâu 3D */
         }
 
         .canvas-container {
             width: 100%;
             max-width: 540px;
             aspect-ratio: 1 / 1;
-            border-radius: 8px;
-            background: transparent;
+            border-radius: 12px;
+            background: #ffffff;
             position: relative;
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            /* Đổ bóng như một tấm ảnh thật đặt trên bàn */
+            box-shadow: var(--shadow-float);
+            transform: rotate(-1deg);
         }
 
         .canvas-container:hover {
-            transform: translateY(-5px) scale(1.02) rotate(1deg);
+            transform: translateY(-10px) scale(1.02) rotate(1deg);
+            box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 🧵 Nghệ thuật dán Washi Tape của Hân */
+        .canvas-container::before {
+            content: '';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-3deg);
+            width: 120px;
+            height: 35px;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border-left: 3px dashed rgba(0,0,0,0.1);
+            border-right: 3px dashed rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            z-index: 20;
+            pointer-events: none;
+            mix-blend-mode: multiply; /* Hiệu ứng hòa trộn màu băng keo trong suốt */
         }
 
         canvas {
             width: 100%;
             height: 100%;
             display: block;
-            border-radius: 8px;
-            box-shadow: var(--shadow-sticker);
+            border-radius: 12px;
+            position: relative;
+            z-index: 10;
         }
 
         .placeholder-ui {
@@ -291,9 +427,9 @@
             align-items: center;
             justify-content: center;
             background: #ffffff;
-            border: 2px dashed var(--color-blue-light);
-            border-radius: 16px;
-            z-index: 5;
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            z-index: 15;
             transition: opacity 0.4s ease;
         }
 
@@ -302,8 +438,27 @@
             pointer-events: none;
         }
 
+        /* Vòng tròn loading khi chưa có ảnh */
+        .pulse-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--color-blue-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            animation: softPulse 2s infinite;
+        }
+
+        @keyframes softPulse {
+            0% { box-shadow: 0 0 0 0 rgba(66, 133, 244, 0.4); }
+            70% { box-shadow: 0 0 0 20px rgba(66, 133, 244, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(66, 133, 244, 0); }
+        }
+
         /* ==========================================================================
-           8. TOAST NOTIFICATIONS
+           8. 🍞 LỜI NHẮN NHỦ (TOAST NOTIFICATIONS)
            ========================================================================== */
         .toast-wrapper {
             position: fixed;
@@ -316,19 +471,20 @@
         }
 
         .toast-msg {
-            background: #ffffff;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
             border-left: 4px solid var(--color-blue);
             color: var(--color-text-main);
             padding: 1rem 1.5rem;
-            border-radius: 8px;
+            border-radius: 12px;
             font-weight: 600;
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
             transform: translateX(120%);
             opacity: 0;
-            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
 
         .toast-msg.show {
@@ -340,72 +496,74 @@
 
 <body>
 
-    <!-- Lưới nền toàn trang -->
+    <!-- ☁️ Hân thêm Không gian nền chiều sâu -->
+    <div class="bg-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
     <div class="bg-grid"></div>
 
     <main class="app-container">
 
-        <!-- ================= CONTROL PANEL ================= -->
+        <!-- ================= PANEL ĐIỀU KHIỂN (TRÁI) ================= -->
         <div class="control-panel">
-
+            
             <div>
                 <div class="badge">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path
-                            d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z">
-                        </path>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
                     </svg>
                     Student Edition
                 </div>
                 <h1 class="main-heading">HPU Scrapbook<br>Profile.</h1>
-                <p class="sub-heading">Tạo ảnh đại sứ sinh viên HPU với các Sticker dễ thương</p>
+                <p class="sub-heading">Tạo ảnh đại sứ sinh viên HPU với các Sticker dễ thương. Nơi lưu giữ thanh xuân rực rỡ nhất! 🌿</p>
             </div>
 
             <!-- Upload Box -->
             <div class="upload-box" id="dropZone">
-                <div class="upload-icon">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                        <polyline points="21 15 16 10 5 21"></polyline>
+                <div class="upload-icon" id="uploadIcon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
                     </svg>
                 </div>
-                <h3>Kéo thả ảnh vào đây</h3>
-                <p>Khuyến nghị ảnh chân dung rõ nét (PNG, JPG)</p>
+                <h3 id="uploadTitle">Kéo thả ảnh vào đây</h3>
+                <p id="uploadDesc">Khuyến nghị ảnh chân dung rõ nét (PNG, JPG)</p>
                 <input type="file" id="fileInput" accept="image/png, image/jpeg, image/jpg">
             </div>
 
             <!-- Actions -->
             <div class="btn-group">
-                <button class="btn btn-secondary" id="resetBtn" disabled>
+                <button class="btn btn-secondary" id="resetBtn" disabled title="Tẩy trắng trang vở">
                     Làm lại
                 </button>
-                <button class="btn btn-secondary" id="shuffleBtn" disabled style="background: #E8F0FE; color: var(--color-blue); border: 1px solid var(--color-blue-light); flex: 0.5;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>
+                <button class="btn btn-secondary" id="shuffleBtn" disabled style="background: var(--color-blue-light); color: var(--color-blue); border-color: transparent;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>
                     Đổi
                 </button>
                 <button class="btn btn-primary" id="downloadBtn" disabled>
                     Tải Poster
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                 </button>
             </div>
         </div>
 
-        <!-- ================= CANVAS PREVIEW ================= -->
+        <!-- ================= KHUNG TRANH HIỂN THỊ (PHẢI) ================= -->
         <div class="preview-panel">
             <div class="canvas-container">
                 <div class="placeholder-ui" id="canvasPlaceholder">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#4285F4" stroke-width="1.5"
-                        style="margin-bottom: 1rem; opacity: 0.5;">
-                        <path
-                            d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z">
-                        </path>
-                        <circle cx="12" cy="13" r="3"></circle>
-                    </svg>
-                    <p style="color: #5F6368; font-weight: 600;">CHỜ HÌNH ẢNH...</p>
+                    <div class="pulse-circle">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#4285F4" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                            <polyline points="21 15 16 10 5 21"></polyline>
+                        </svg>
+                    </div>
+                    <p style="color: #64748b; font-weight: 600; font-size: 1.1rem;">CHỜ ẢNH CỦA BẠN...</p>
                 </div>
-                <!-- Canvas -->
+                <!-- Canvas Giữ Nguyên Logic Vẽ -->
                 <canvas id="avatarCanvas" width="1080" height="1080"></canvas>
             </div>
         </div>
@@ -417,9 +575,10 @@
     <script>
         /**
          * ==========================================================================
-         * CREATIVE STUDIO -> SCRAPBOOK ENGINE
-         * Kỹ thuật: Polaroid Clip Mask, Smart CORS Image Pipeline
-         * 🌟 BỐ CỤC ĐƯỢC HÂN TÁI CẤU TRÚC: "FRAMING" RỘNG RÃI & MỀM MẠI! 🌟
+         * 🎨 HÂN ĐÃ NÂNG CẤP GIAO DIỆN TƯƠNG TÁC (UI/UX)
+         * - Giữ đúng Typography từ lần design đẹp nhất.
+         * - Cập nhật vị trí bám sát viền ảnh/viền dưới cực chuẩn.
+         * - Ưu tiên lóp Stickers LÊN TRÊN CÙNG để không bị chữ đè.
          * ==========================================================================
          */
 
@@ -441,12 +600,18 @@
                 this.dropZone = document.getElementById('dropZone');
                 this.downloadBtn = document.getElementById('downloadBtn');
                 this.resetBtn = document.getElementById('resetBtn');
-                this.shuffleBtn = document.getElementById('shuffleBtn'); // Nút đổi sticker
+                this.shuffleBtn = document.getElementById('shuffleBtn');
                 this.placeholder = document.getElementById('canvasPlaceholder');
+                
+                // UI Elements cho Dropzone
+                this.uploadTitle = document.getElementById('uploadTitle');
+                this.uploadDesc = document.getElementById('uploadDesc');
+                this.uploadIcon = document.getElementById('uploadIcon');
                 
                 this.userImage = null;
                 this.stickers = {}; 
-                this.currentStickerLayout = []; // Lưu trữ tổ hợp 3 sticker hiện tại
+                this.currentStickerLayout = []; 
+                this.isShuffling = false;
 
                 this.loadStickers();
                 
@@ -455,7 +620,7 @@
                 });
             }
 
-            // --- SMART IMAGE PIPELINE (Chống lỗi CORS) ---
+            // --- SMART IMAGE PIPELINE ---
             loadStickers() {
                 const sources = {
                     heart: 'https://googlestudentambassador.vn/wp-content/uploads/2025/12/Heart-Dark-1024x1024.webp',
@@ -470,26 +635,20 @@
                     let img = new Image();
                     img.crossOrigin = "Anonymous"; 
                     
-                    // Thử thách 1: Tải trực tiếp
                     img.src = sources[key];
-                    
                     img.onload = () => {
                         this.stickers[key] = img;
                         if (this.userImage) this.composeArtwork();
                     };
 
-                    // Thử thách 2: Dùng Proxy nếu bị lỗi CORS
                     img.onerror = () => {
                         let proxyImg = new Image();
                         proxyImg.crossOrigin = "Anonymous";
                         proxyImg.src = `https://api.allorigins.win/raw?url=${encodeURIComponent(sources[key])}`;
-                        
                         proxyImg.onload = () => {
                             this.stickers[key] = proxyImg;
                             if (this.userImage) this.composeArtwork();
                         };
-                        
-                        // Thử thách 3: Bỏ CORS (Sẽ lưu ảnh bằng tay nếu bị Tainted Canvas)
                         proxyImg.onerror = () => {
                             let noCorsImg = new Image();
                             noCorsImg.src = sources[key];
@@ -524,45 +683,44 @@
                 this.downloadBtn.addEventListener('click', () => this.exportArtwork());
                 this.resetBtn.addEventListener('click', () => this.clearStage());
                 
-                // Kích hoạt bốc thăm lại Sticker khi nhấn nút Đổi
                 this.shuffleBtn.addEventListener('click', () => {
+                    this.isShuffling = true;
                     this.generateRandomLayout();
                     this.composeArtwork();
-                    this.notify('Đã xáo trộn 3 sticker ngẫu nhiên! 🎲', true);
+                    this.notify('Đã xáo trộn icon ở các Vị Trí Vàng! 🎲', true);
                 });
             }
 
-            // --- THUẬT TOÁN TẠO BỐ CỤC RANDOM 3 STICKERS TỪ 6 VỊ TRÍ ---
+            // 🪄 HÂN ĐÃ KÉO CÁC ICON RA SÁT VIỀN ĐÚNG NHƯ ẢNH MỚI!
             generateRandomLayout() {
                 const availableKeys = ['heart', 'element', 'pen', 'dino', 'rocket', 'speaker'];
-                // 1. Lấy ngẫu nhiên 3 icon trong danh sách
                 const shuffledKeys = availableKeys.sort(() => 0.5 - Math.random());
-                const selectedKeys = shuffledKeys.slice(0, 3);
+                
+                // Mặc định luôn là Dino, Rocket, Speaker để giống ảnh mẫu MỚI NHẤT 100%
+                let selectedKeys = ['dino', 'rocket', 'speaker'];
 
-                // 2. Định nghĩa 6 "vùng an toàn" không bao giờ đè mặt nhân vật
+                if (this.isShuffling) {
+                    selectedKeys = shuffledKeys.slice(0, 3);
+                }
+
+                // CẬP NHẬT TỌA ĐỘ VÀNG (Sát viền trái, Sát viền dưới)
                 const SLOTS = [
-                    { x: 160, y: 320, minW: 140, maxW: 180, baseRot: -15 }, // Góc trên trái (dưới tag HPU)
-                    { x: 920, y: 260, minW: 160, maxW: 220, baseRot: 15 },  // Góc trên phải
-                    { x: 160, y: 650, minW: 160, maxW: 200, baseRot: -5 },  // Giữa cánh trái
-                    { x: 920, y: 600, minW: 160, maxW: 200, baseRot: 20 },  // Giữa cánh phải
-                    { x: 200, y: 880, minW: 180, maxW: 240, baseRot: 10 },  // Góc dưới trái
-                    { x: 900, y: 880, minW: 200, maxW: 260, baseRot: -15 }  // Góc dưới phải
+                    { x: 840, y: 280, w: 160, baseRot: 15 },    // [0] Dino: Giữ nguyên góc phải trên
+                    { x: 140, y: 680, w: 180, baseRot: -25 },   // [1] Rocket: Sát khung trái của ảnh lớn (Canvas), xa khung Polaroid
+                    { x: 860, y: 940, w: 170, baseRot: 20 }     // [2] Speaker: Nằm dưới cùng, góc phải, đè nhẹ lên viền dải băng xanh
                 ];
 
-                // 3. Lấy ngẫu nhiên 3 vùng an toàn
-                const shuffledSlots = [...SLOTS].sort(() => 0.5 - Math.random());
-                const selectedSlots = shuffledSlots.slice(0, 3);
-
-                // 4. Ghép Icon vào Vùng và thêm "gia vị" ngẫu nhiên (Offset & Xoay)
                 this.currentStickerLayout = selectedKeys.map((key, index) => {
-                    const slot = selectedSlots[index];
-                    const offsetX = (Math.random() - 0.5) * 40; // Xê dịch X một chút
-                    const offsetY = (Math.random() - 0.5) * 40; // Xê dịch Y một chút
-                    const width = slot.minW + Math.random() * (slot.maxW - slot.minW);
-                    const rotation = slot.baseRot + (Math.random() - 0.5) * 30; // Xoay tự nhiên
+                    const slot = SLOTS[index];
+                    // Dao động siêu nhỏ để tự nhiên
+                    const offsetX = (Math.random() - 0.5) * 10; 
+                    const offsetY = (Math.random() - 0.5) * 10; 
+                    const rotation = slot.baseRot + (Math.random() - 0.5) * 5; 
 
-                    return { key, x: slot.x + offsetX, y: slot.y + offsetY, w: width, r: rotation };
+                    return { key, x: slot.x + offsetX, y: slot.y + offsetY, w: slot.w, r: rotation };
                 });
+
+                this.isShuffling = false; 
             }
 
             processImage(files) {
@@ -579,12 +737,18 @@
                     const img = new Image();
                     img.onload = () => {
                         this.userImage = img;
+                        
+                        // Cập nhật UI
                         this.placeholder.classList.add('hidden');
                         this.downloadBtn.disabled = false;
                         this.resetBtn.disabled = false;
-                        this.shuffleBtn.disabled = false; // Mở khóa nút xáo trộn
+                        this.shuffleBtn.disabled = false; 
                         
-                        // Lần đầu tải ảnh sẽ quay số layout mới
+                        this.dropZone.classList.add('has-file');
+                        this.uploadTitle.textContent = "Bức ảnh thật tuyệt! ✨";
+                        this.uploadDesc.textContent = "Bấm hoặc thả ảnh khác để đổi nhé.";
+                        this.uploadIcon.innerHTML = `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`;
+                        
                         this.generateRandomLayout(); 
                         this.composeArtwork();
                         
@@ -598,17 +762,11 @@
             // === HỆ THỐNG RENDER CHÍNH ===
             composeArtwork() {
                 this.ctx.clearRect(0, 0, ART_CONFIG.SIZE, ART_CONFIG.SIZE);
-                
-                // Vẽ lưới vở học sinh
                 this.drawNotebookBackground();
                 
-                // Vẽ ảnh Polaroid ở chính giữa
                 if (this.userImage) {
                     this.drawPolaroidPhoto(this.userImage);
                 }
-
-                // Vẽ Typography và các Sticker ĐÈ LÊN khung ảnh
-                // (Hân gộp chung để đảm bảo mọi thứ đè lên ảnh một cách mượt mà nhất)
                 this.drawForegroundElements(); 
             }
 
@@ -640,16 +798,13 @@
                 this.ctx.restore();
             }
 
-            // --- VẼ KHUNG ẢNH POLAROID TILT SANG PHẢI ---
             drawPolaroidPhoto(img) {
                 const s = ART_CONFIG.SIZE;
                 this.ctx.save();
                 
-                // Căn chính giữa, nghiêng một chút sang PHẢI (như ảnh gốc)
                 this.ctx.translate(s/2, s/2 - 20); 
                 this.ctx.rotate(2 * Math.PI / 180);
 
-                // Thu nhỏ Polaroid lại một chút để các icon có không gian thở ở viền
                 const pW = 660; 
                 const pH = 780; 
                 
@@ -684,25 +839,15 @@
                 this.ctx.restore();
             }
 
-            // 🎨 HÂN SẮP XẾP LẠI TỌA ĐỘ STICKER VÀ TYPOGRAPHY Ở ĐÂY NÈ!
+            // Hân đảo Typography lên trước, để Icon vẽ đè lên sau cùng nè anh!
             drawForegroundElements() {
                 const s = ART_CONFIG.SIZE;
                 
-                // ===== 1. CÁC STICKER BAY XUNG QUANH (RANDOM 3/6) =====
-                if (this.currentStickerLayout) {
-                    this.currentStickerLayout.forEach(item => {
-                        this.drawStickerImage(this.stickers[item.key], item.x, item.y, item.w, item.r);
-                    });
-                }
-
-                // ===== 2. TYPOGRAPHY (CHỮ VÀ BĂNG KEO) =====
-
-                // A. TEAM TAG (Góc trên trái, đè lên đỉnh góc trái Polaroid)
+                // ===== 1. TYPOGRAPHY (CHỮ VÀ BĂNG KEO) ĐƯỢC VẼ TRƯỚC =====
                 this.ctx.save();
                 this.ctx.translate(240, 190);
                 this.ctx.rotate(-8 * Math.PI / 180);
                 
-                // Băng keo dán rách
                 this.ctx.fillStyle = '#ffffff';
                 this.ctx.shadowColor = 'rgba(0,0,0,0.12)';
                 this.ctx.shadowBlur = 10;
@@ -715,7 +860,6 @@
                 this.ctx.closePath();
                 this.ctx.fill();
                 
-                // Text #Team HPU
                 this.ctx.shadowColor = 'transparent';
                 this.ctx.fillStyle = '#111827';
                 this.ctx.font = `900 50px ${ART_CONFIG.FONT_HEADING}`;
@@ -724,9 +868,6 @@
                 this.ctx.fillText("#Team HPU", 0, 5);
                 this.ctx.restore();
                 
-                // B. KHỐI TEXT CHÍNH (Chính giữa bên dưới, xếp lớp trật tự)
-                
-                // Lớp 1: Băng keo "Mình là"
                 this.ctx.save();
                 this.ctx.translate(360, 750);
                 this.ctx.rotate(-4 * Math.PI / 180);
@@ -747,10 +888,8 @@
                 this.ctx.fillText("Mình là", 0, 5);
                 this.ctx.restore();
 
-                // Lớp 2: Vệt sơn xanh "HPU Ambassador"
                 this.ctx.save();
                 this.ctx.translate(540, 840);
-                // Không xoay, để vệt sơn thẳng thớm cân bằng bố cục
                 
                 this.ctx.fillStyle = ART_CONFIG.COLOR_BLUE;
                 this.ctx.shadowColor = 'rgba(66, 133, 244, 0.3)';
@@ -772,7 +911,6 @@
                 this.ctx.fillText("HPU Ambassador", 0, 5);
                 this.ctx.restore();
 
-                // Lớp 3: Subtitle viền nổi "Sinh viên HPU"
                 this.ctx.save();
                 this.ctx.translate(540, 930);
                 this.ctx.textAlign = 'center';
@@ -781,7 +919,6 @@
                 
                 const subtitleText = "Sinh viên HPU";
                 
-                // Viền trắng dày tạo hiệu ứng nổi khối rõ rệt
                 this.ctx.lineWidth = 18;
                 this.ctx.strokeStyle = '#ffffff';
                 this.ctx.lineJoin = 'round';
@@ -790,11 +927,17 @@
                 this.ctx.shadowOffsetY = 6;
                 this.ctx.strokeText(subtitleText, 0, 0);
                 
-                // Text lõi đen
                 this.ctx.shadowColor = 'transparent';
                 this.ctx.fillStyle = '#111827';
                 this.ctx.fillText(subtitleText, 0, 0);
                 this.ctx.restore();
+
+                // ===== 2. STICKER ĐƯỢC VẼ CUỐI CÙNG LÊN TRÊN CÙNG =====
+                if (this.currentStickerLayout) {
+                    this.currentStickerLayout.forEach(item => {
+                        this.drawStickerImage(this.stickers[item.key], item.x, item.y, item.w, item.r);
+                    });
+                }
             }
 
             exportArtwork() {
@@ -818,11 +961,18 @@
                 this.fileInput.value = "";
                 this.currentStickerLayout = [];
                 this.ctx.clearRect(0, 0, ART_CONFIG.SIZE, ART_CONFIG.SIZE);
+                
+                // Khôi phục UI ban đầu
                 this.placeholder.classList.remove('hidden');
+                this.dropZone.classList.remove('has-file');
+                this.uploadTitle.textContent = "Kéo thả ảnh vào đây";
+                this.uploadDesc.textContent = "Khuyến nghị ảnh chân dung rõ nét (PNG, JPG)";
+                this.uploadIcon.innerHTML = `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>`;
+
                 this.downloadBtn.disabled = true;
                 this.resetBtn.disabled = true;
-                this.shuffleBtn.disabled = true; // Khóa lại
-                this.notify('Đã làm sạch sổ tay.');
+                this.shuffleBtn.disabled = true; 
+                this.notify('Đã dọn dẹp mặt bàn sạch sẽ 🧹', true);
             }
 
             notify(msg, isSuccess = true) {
@@ -831,8 +981,8 @@
                 toast.className = `toast-msg`;
                 
                 const iconSVG = isSuccess 
-                    ? `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4285F4" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`
-                    : `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EA4335" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>`;
+                    ? `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4285F4" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`
+                    : `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#EA4335" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>`;
 
                 toast.innerHTML = `${iconSVG} <span>${msg}</span>`;
                 
@@ -840,8 +990,8 @@
                 setTimeout(() => toast.classList.add('show'), 50);
                 setTimeout(() => {
                     toast.classList.remove('show');
-                    setTimeout(() => toast.remove(), 400);
-                }, 4000); 
+                    setTimeout(() => toast.remove(), 500);
+                }, 3500); 
             }
         }
 
