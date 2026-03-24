@@ -576,9 +576,8 @@
         /**
          * ==========================================================================
          * 🎨 HÂN ĐÃ NÂNG CẤP GIAO DIỆN TƯƠNG TÁC (UI/UX)
-         * - Giữ đúng Typography từ lần design đẹp nhất.
-         * - Cập nhật vị trí bám sát viền ảnh/viền dưới cực chuẩn.
-         * - Ưu tiên lóp Stickers LÊN TRÊN CÙNG để không bị chữ đè.
+         * - Tách #Team và HPU thành 2 lớp băng keo (Tape) siêu nghệ thuật.
+         * - Bổ sung Logo HPU đính kèm ở góc trên phải của #Team.
          * ==========================================================================
          */
 
@@ -622,13 +621,15 @@
 
             // --- SMART IMAGE PIPELINE ---
             loadStickers() {
+                // Hân đã thêm bạn Logo HPU siêu xịn vào bộ sưu tập Sticker rồi nè! 🌟
                 const sources = {
                     heart: 'https://googlestudentambassador.vn/wp-content/uploads/2025/12/Heart-Dark-1024x1024.webp',
                     element: 'https://googlestudentambassador.vn/wp-content/uploads/2025/12/element.webp',
                     pen: 'https://googlestudentambassador.vn/wp-content/uploads/2025/12/Pen-Dark-1024x1024.webp',
                     dino: 'https://googlestudentambassador.vn/wp-content/uploads/2025/12/Dino-Dark-1024x1024.webp',
                     rocket: 'https://googlestudentambassador.vn/wp-content/uploads/2025/12/Rocket-Dark-1024x1024.webp',
-                    speaker: 'https://googlestudentambassador.vn/wp-content/uploads/2025/12/Speaker-Dark-1024x1024.webp'
+                    speaker: 'https://googlestudentambassador.vn/wp-content/uploads/2025/12/Speaker-Dark-1024x1024.webp',
+                    hpuLogo: 'https://raw.githubusercontent.com/hpudn/hpudn.github.io/refs/heads/main/share_fb_home-removebg-preview.png'
                 };
 
                 for (let key in sources) {
@@ -691,28 +692,26 @@
                 });
             }
 
-            // 🪄 HÂN ĐÃ KÉO CÁC ICON RA SÁT VIỀN ĐÚNG NHƯ ẢNH MỚI!
+            // 🪄 TỌA ĐỘ VÀNG CỦA CÁC BÉ ICON
             generateRandomLayout() {
                 const availableKeys = ['heart', 'element', 'pen', 'dino', 'rocket', 'speaker'];
                 const shuffledKeys = availableKeys.sort(() => 0.5 - Math.random());
                 
-                // Mặc định luôn là Dino, Rocket, Speaker để giống ảnh mẫu MỚI NHẤT 100%
                 let selectedKeys = ['dino', 'rocket', 'speaker'];
 
                 if (this.isShuffling) {
                     selectedKeys = shuffledKeys.slice(0, 3);
                 }
 
-                // CẬP NHẬT TỌA ĐỘ VÀNG (Sát viền trái, Sát viền dưới)
+                // 🪄 CẬP NHẬT TỌA ĐỘ THEO ẢNH FULL: KÉO SÁT VIỀN TRÁI & ÉP SÁT ĐÁY DƯỚI!
                 const SLOTS = [
-                    { x: 840, y: 280, w: 160, baseRot: 15 },    // [0] Dino: Giữ nguyên góc phải trên
-                    { x: 140, y: 680, w: 180, baseRot: -25 },   // [1] Rocket: Sát khung trái của ảnh lớn (Canvas), xa khung Polaroid
-                    { x: 860, y: 940, w: 170, baseRot: 20 }     // [2] Speaker: Nằm dưới cùng, góc phải, đè nhẹ lên viền dải băng xanh
+                    { x: 840, y: 280, w: 160, baseRot: 15 },    // Dino: Giữ nguyên góc phải trên
+                    { x: 90, y: 700, w: 180, baseRot: -25 },    // 🪄 Rocket: Ép sát rạt vào lề trái!
+                    { x: 880, y: 990, w: 170, baseRot: 20 }     // 🪄 Speaker: Hạ tuốt xuống dưới cùng!
                 ];
 
                 this.currentStickerLayout = selectedKeys.map((key, index) => {
                     const slot = SLOTS[index];
-                    // Dao động siêu nhỏ để tự nhiên
                     const offsetX = (Math.random() - 0.5) * 10; 
                     const offsetY = (Math.random() - 0.5) * 10; 
                     const rotation = slot.baseRot + (Math.random() - 0.5) * 5; 
@@ -839,35 +838,129 @@
                 this.ctx.restore();
             }
 
-            // Hân đảo Typography lên trước, để Icon vẽ đè lên sau cùng nè anh!
+            // Typography & Logo HPU
             drawForegroundElements() {
                 const s = ART_CONFIG.SIZE;
                 
-                // ===== 1. TYPOGRAPHY (CHỮ VÀ BĂNG KEO) ĐƯỢC VẼ TRƯỚC =====
+                // ===== 1. CỤM LOGO & TYPOGRAPHY TRÁI TRÊN (Thiết kế xé dán nghệ thuật) =====
                 this.ctx.save();
-                this.ctx.translate(240, 190);
-                this.ctx.rotate(-8 * Math.PI / 180);
+                this.ctx.translate(220, 160); // Đẩy toàn bộ cụm tiến lên trên và lùi nhẹ sang trái
+                
+                // --- LỚP DƯỚI: Băng keo chữ HPU ---
+                this.ctx.save();
+                this.ctx.translate(10, 30); 
+                this.ctx.rotate(-4 * Math.PI / 180);
                 
                 this.ctx.fillStyle = '#ffffff';
                 this.ctx.shadowColor = 'rgba(0,0,0,0.12)';
-                this.ctx.shadowBlur = 10;
-                this.ctx.shadowOffsetY = 6;
+                this.ctx.shadowBlur = 12;
+                this.ctx.shadowOffsetY = 8;
                 this.ctx.beginPath();
-                this.ctx.moveTo(-165, -45);
-                this.ctx.lineTo(165, -40); 
-                this.ctx.lineTo(160, 40);  
-                this.ctx.lineTo(-170, 45); 
+                // TẠO VIỀN XÉ GIẤY RĂNG CƯA CHÂN THỰC
+                this.ctx.moveTo(-130, -50);
+                this.ctx.lineTo(140, -45); 
+                this.ctx.lineTo(148, -20); 
+                this.ctx.lineTo(138, 5);
+                this.ctx.lineTo(145, 30);
+                this.ctx.lineTo(135, 50); 
+                this.ctx.lineTo(-135, 45); 
+                this.ctx.lineTo(-145, 20); 
+                this.ctx.lineTo(-132, 0);
+                this.ctx.lineTo(-142, -25);
                 this.ctx.closePath();
                 this.ctx.fill();
                 
                 this.ctx.shadowColor = 'transparent';
                 this.ctx.fillStyle = '#111827';
-                this.ctx.font = `900 50px ${ART_CONFIG.FONT_HEADING}`;
+                this.ctx.font = `900 85px ${ART_CONFIG.FONT_HEADING}`; 
                 this.ctx.textAlign = 'center';
                 this.ctx.textBaseline = 'middle';
-                this.ctx.fillText("#Team HPU", 0, 5);
+                this.ctx.fillText("HPU", 0, 5);
                 this.ctx.restore();
+
+                // --- LỚP TRÊN: Băng keo chữ #Team (Đè lên lớp HPU) ---
+                this.ctx.save();
+                this.ctx.translate(-15, -65); 
+                this.ctx.rotate(-7 * Math.PI / 180); 
                 
+                this.ctx.fillStyle = '#ffffff';
+                this.ctx.shadowColor = 'rgba(0,0,0,0.15)';
+                this.ctx.shadowBlur = 15;
+                this.ctx.shadowOffsetY = 10;
+                this.ctx.beginPath();
+                this.ctx.moveTo(-130, -45);
+                this.ctx.lineTo(140, -40);
+                this.ctx.lineTo(148, -15); 
+                this.ctx.lineTo(138, 5);
+                this.ctx.lineTo(145, 30);
+                this.ctx.lineTo(135, 50);
+                this.ctx.lineTo(-135, 45);
+                this.ctx.lineTo(-145, 20);
+                this.ctx.lineTo(-132, 0);
+                this.ctx.lineTo(-142, -20);
+                this.ctx.closePath();
+                this.ctx.fill();
+                
+                this.ctx.shadowColor = 'transparent';
+                this.ctx.fillStyle = '#111827';
+                this.ctx.font = `900 65px ${ART_CONFIG.FONT_HEADING}`; 
+                this.ctx.textAlign = 'center';
+                this.ctx.textBaseline = 'middle';
+                this.ctx.fillText("#Team", 0, 5);
+
+                // --- LỚP CUỐI: LOGO HPU ĐỨNG GIỮA 2 CHỮ (HÂN ĐÃ KÉO VỀ CHÍNH GIỮA THEO LỆNH!) 🪄 ---
+                if (this.stickers['hpuLogo']) {
+                    this.ctx.save();
+                    // 🪄 Hân nhích Logo SANG TRÁI MỘT TẸO (X=172) để sát vào hai chữ hơn nha!
+                    this.ctx.translate(172, 45); 
+                    this.ctx.rotate(8 * Math.PI / 180); 
+                    
+                    const logoW = 250; // Giữ nguyên size logo cực bự và hoành tráng!
+                    const aspect = this.stickers['hpuLogo'].height / (this.stickers['hpuLogo'].width || 1);
+                    const logoH = logoW * aspect;
+                    
+                    // 🪄 Viền mỏng thanh thoát 10px
+                    const borderSize = 10; 
+                    
+                    // TẠO CANVAS PHỤ ĐỂ VẼ VIỀN STICKER
+                    const offCanvas = document.createElement('canvas');
+                    offCanvas.width = logoW + borderSize * 2;
+                    offCanvas.height = logoH + borderSize * 2;
+                    const offCtx = offCanvas.getContext('2d');
+                    offCtx.imageSmoothingEnabled = true;
+                    offCtx.imageSmoothingQuality = 'high';
+                    
+                    // Vẽ nhiều bản sao xung quanh để tạo độ dày của viền mỏng
+                    for (let angle = 0; angle < 360; angle += 2) {
+                        const dx = borderSize * Math.cos(angle * Math.PI / 180);
+                        const dy = borderSize * Math.sin(angle * Math.PI / 180);
+                        offCtx.drawImage(this.stickers['hpuLogo'], borderSize + dx, borderSize + dy, logoW, logoH);
+                    }
+                    
+                    // Phủ toàn bộ khối vừa vẽ thành màu trắng tinh
+                    offCtx.globalCompositeOperation = 'source-in';
+                    offCtx.fillStyle = '#ffffff';
+                    offCtx.fillRect(0, 0, offCanvas.width, offCanvas.height);
+                    
+                    // Đè ảnh logo gốc lên chính giữa khối trắng
+                    offCtx.globalCompositeOperation = 'source-over';
+                    offCtx.drawImage(this.stickers['hpuLogo'], borderSize, borderSize, logoW, logoH);
+                    
+                    // Cân chỉnh lại bóng đổ cho êm ái, hợp với viền mỏng
+                    this.ctx.shadowColor = 'rgba(0,0,0,0.2)';
+                    this.ctx.shadowBlur = 15;
+                    this.ctx.shadowOffsetY = 8;
+                    
+                    this.ctx.drawImage(offCanvas, -logoW/2 - borderSize, -logoH/2 - borderSize);
+                    this.ctx.restore();
+                }
+
+                this.ctx.restore(); // KẾT THÚC LỚP #Team
+                this.ctx.restore(); // KẾT THÚC CỤM TRÁI TRÊN
+                
+                // ===== CÁC TYPOGRAPHY CÒN LẠI BÊN DƯỚI =====
+                
+                // --- Lớp: Băng keo "Mình là" ---
                 this.ctx.save();
                 this.ctx.translate(360, 750);
                 this.ctx.rotate(-4 * Math.PI / 180);
@@ -877,7 +970,18 @@
                 this.ctx.shadowBlur = 15;
                 this.ctx.shadowOffsetY = 8;
                 this.ctx.beginPath();
-                this.ctx.roundRect(-150, -40, 300, 80, 8);
+                // Viền xé giấy cho băng keo Mình Là
+                this.ctx.moveTo(-150, -35);
+                this.ctx.lineTo(140, -40);
+                this.ctx.lineTo(148, -15);
+                this.ctx.lineTo(138, 5);
+                this.ctx.lineTo(145, 25);
+                this.ctx.lineTo(135, 45);
+                this.ctx.lineTo(-145, 40);
+                this.ctx.lineTo(-155, 20);
+                this.ctx.lineTo(-142, 0);
+                this.ctx.lineTo(-152, -15);
+                this.ctx.closePath();
                 this.ctx.fill();
                 
                 this.ctx.shadowColor = 'transparent';
@@ -888,6 +992,7 @@
                 this.ctx.fillText("Mình là", 0, 5);
                 this.ctx.restore();
 
+                // --- Lớp: Vệt dán xanh "HPU Ambassador" ---
                 this.ctx.save();
                 this.ctx.translate(540, 840);
                 
@@ -896,10 +1001,17 @@
                 this.ctx.shadowBlur = 20;
                 this.ctx.shadowOffsetY = 10;
                 this.ctx.beginPath();
-                this.ctx.moveTo(-360, -45);
-                this.ctx.lineTo(360, -50);
-                this.ctx.lineTo(350, 50);
-                this.ctx.lineTo(-370, 45);
+                // Kéo dài đầu bên trái ra thêm để không bị cụt
+                this.ctx.moveTo(-380, -45); 
+                this.ctx.lineTo(360, -42);
+                this.ctx.lineTo(370, -15);
+                this.ctx.lineTo(355, 5);
+                this.ctx.lineTo(365, 30);
+                this.ctx.lineTo(350, 48);
+                this.ctx.lineTo(-355, 45);
+                this.ctx.lineTo(-370, 20);
+                this.ctx.lineTo(-355, 0);
+                this.ctx.lineTo(-385, -20); // Kéo dài đuôi này luôn cho cân đối
                 this.ctx.closePath();
                 this.ctx.fill();
 
@@ -911,6 +1023,7 @@
                 this.ctx.fillText("HPU Ambassador", 0, 5);
                 this.ctx.restore();
 
+                // --- Lớp: Text "Sinh viên HPU" ---
                 this.ctx.save();
                 this.ctx.translate(540, 930);
                 this.ctx.textAlign = 'center';
@@ -967,7 +1080,7 @@
                 this.dropZone.classList.remove('has-file');
                 this.uploadTitle.textContent = "Kéo thả ảnh vào đây";
                 this.uploadDesc.textContent = "Khuyến nghị ảnh chân dung rõ nét (PNG, JPG)";
-                this.uploadIcon.innerHTML = `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>`;
+                this.uploadIcon.innerHTML = `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`;
 
                 this.downloadBtn.disabled = true;
                 this.resetBtn.disabled = true;
